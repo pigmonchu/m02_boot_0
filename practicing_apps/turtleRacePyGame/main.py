@@ -2,10 +2,6 @@ import pygame
 from pygame.locals import *
 import sys
 
-class Turtle(pygame.sprite.Sprite):
-    
-    
-
 class Race():
     def __init__(self, width, height):
         self.__size = (width, height)
@@ -15,6 +11,7 @@ class Race():
             
 
     def launch(self):
+        pygame.font.init()
         pygame.init()
         self.__screen = pygame.display.set_mode(self.__size, pygame.HWSURFACE)
         pygame.display.set_caption(self.__title)

@@ -38,3 +38,12 @@ class PerroAsistencia(Perro):
         else:
             self.__trabajando = valor
         
+
+class Timido():
+    def __init__(self, nombre):
+        self.__nombre = nombre
+        
+    def preguntarNombreConCuidado(self):
+        return self.__nombre
+        
+        
