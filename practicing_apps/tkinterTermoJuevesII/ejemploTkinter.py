@@ -19,6 +19,3 @@ if __name__ == '__main__':
     
     app.start()
 
-ttk.Button
-ttk.Radiobutton
-ttk.Entry
