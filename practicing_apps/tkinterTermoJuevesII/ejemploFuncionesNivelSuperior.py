@@ -20,3 +20,8 @@ def sumaf(limitTo, f):
 
 def cuadrado(x):
     return x*x
+
+def cuadradoE(x, y):
+    return x*x
+
+print(sumaf(4, cuadradoE))

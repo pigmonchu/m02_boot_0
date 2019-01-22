@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import ttk
 
+class NumberEntry(ttk.Entry)
+
 class mainApp(Tk):
     entrada = None
     tipoUnidad = None

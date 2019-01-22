@@ -215,10 +215,10 @@ class mainApp():
             text = self.entrada.render() # Obtenememos rectánculo blanco y foto de texto y lo asignamos a text
             pygame.draw.rect(self.__screen, (255, 255, 255), text[0]) #creamos el rectángulo blanco con sus datos (posición y tamaño) text[0]
             self.__screen.blit(text[1], self.entrada.pos()) #Pintamos la foto del texto (text[1])
-            
+            '''
             #Pintamos el selector
             self.__screen.blit(self.selector.custome(), (112,153))
-            
+            '''
             pygame.display.flip()
 
 if __name__ == '__main__':
