@@ -16,9 +16,25 @@ class CalcDisplay(ttk.Frame):
         
         s = ttk.Style()
         s.configure('my.TLabel', font=('Helvetica', 42))
+ 
         self.__lbl = ttk.Label(self, text=self.__value, style='my.TLabel', anchor=E)
         
         self.__lbl.pack(fill=BOTH, expand=1)
+    
+    def signo(self):
+        
+        if self.__value[0] == '-':
+            self.__value = self.__value[1:]
+        else:
+            self.__value = '-' + self.__value
+
+        self.__lbl.config(text=self.__value)
+        
+    def delLast(self):
+        self.__value = self.__value[:-1]
+        if len(self.__value) == 0:
+            self.__value = '0'
+        self.__lbl.config(text=self.__value)
     
     def reset(self):
         self.__value = '0'
@@ -34,6 +50,9 @@ class CalcDisplay(ttk.Frame):
 
     def setValue(self, value):
         try:
+            if value == ',':
+                value = '0.'
+
             float(value)
             value = str(value)
             value = value.replace('.', ',')
@@ -99,11 +118,15 @@ class MainApp(Tk):
     __v1 = 0
     __v2 = 0
     __op = ""
+    __isFirstNumber = True
     
     def __init__(self):
         Tk.__init__(self)
         self.title("Calculadora")
         self.geometry("272x300")
+        
+        self.bind("<KeyPress>", self.keydown)
+
         
         CalcButton(self, text="0", cWidth=2, command=lambda: self.numberDisplay("0")).place(x=0, y=250)
         CalcButton(self, text="1", command=lambda: self.numberDisplay("1")).place(x=0, y=200)
@@ -116,33 +139,53 @@ class MainApp(Tk):
         CalcButton(self, text="8", command=lambda: self.numberDisplay("8")).place(x=68, y=100)
         CalcButton(self, text="9", command=lambda: self.numberDisplay("9")).place(x=136, y=100)
         
-        CalcButton(self, text="C", cWidth=2, command=self.test).place(x=0, y=50)
-        CalcButton(self, text="+/-").place(x=136, y=50)
+        CalcButton(self, text="C", command=self.reset, cWidth=2).place(x=0, y=50)
+        CalcButton(self, text="+/-", command=self.signo).place(x=136, y=50)
         CalcButton(self, text="÷", command=lambda: self.opera('/')).place(x=204, y=50)
         CalcButton(self, text="x", command=lambda: self.opera('x')).place(x=204, y=100)
         CalcButton(self, text="-", command=lambda: self.opera('-')).place(x=204, y=150)
         CalcButton(self, text="+", command=lambda: self.opera('+')).place(x=204, y=200)
-        CalcButton(self, text="=").place(x=204, y=250)
+        CalcButton(self, text="=", command=lambda: self.opera('=')).place(x=204, y=250)
         CalcButton(self, text=",", command=lambda: self.numberDisplay(",")).place(x=136, y=250)
         
         self.__display = CalcDisplay(self)
         self.__display.place(x=0, y=0)
+        
+    def keydown(self, event):
+        if event.keysym == 'BackSpace':
+            self.__display.delLast()
 
-    def test(self):
-        print("Por aquí pasa")
+    def signo(self):
+        self.__display.signo()
 
     def start(self):
         self.mainloop()
         
+    def reset(self):
+        self.__v1 = 0
+        self.__v2 = 0
+        self.__op = ''
+        self.__isFirstNumber = True
+        self.__display.setValue('0')
+        print('v1: {}, v2:{}, op:{}'.format(self.__v1, self.__v2, self.__op))
+        
     def numberDisplay(self, numberValue):
         print(numberValue)
-        self.__display.addDigit(numberValue)
-    
+        
+        if self.__isFirstNumber:
+            self.__display.setValue(numberValue)
+            self.__isFirstNumber = False
+        else:
+            self.__display.addDigit(numberValue)
+
     def opera(self, operador):
-        if self.__v1 == 0:
+        if self.__op == "":
             self.__v1 = self.__display.getValue()
-            self.__op = operador
-            self.__display.reset()
+            if operador != '=':
+                self.__op = operador
+                self.__display.reset()
+            else:
+                self.__isFirstNumber = True
         else:
             self.__v2 = self.__display.getValue()
             if self.__op == '+':
@@ -155,10 +198,16 @@ class MainApp(Tk):
                 total = self.__v1 / self.__v2
             self.__display.setValue(total)
             #Actualizar estado
-            self.__op = operador
+            if operador != '=':
+                self.__op = operador
+            else:
+                self.__op = ""
+            
             self.__v1 = total
             self.__v2 = 0
-            
+            self.__isFirstNumber = True
+        
+        print('v1: {}, v2:{}, op:{}'.format(self.__v1, self.__v2, self.__op))
 
         
     def add(self):
